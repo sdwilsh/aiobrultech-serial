@@ -1,4 +1,4 @@
-"""siobrultech-protocols stub setup script."""
+"""aiobrultech-serial stub setup script."""
 import setuptools
 
 if __name__ == "__main__":
