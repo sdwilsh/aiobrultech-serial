@@ -1,10 +1,11 @@
 import asyncio
 import os
 import unittest
+from unittest import IsolatedAsyncioTestCase
+
+from siobrultech_protocols.gem.packets import Packet
 
 from aiobrultech_serial import connect
-from siobrultech_protocols.gem.packets import Packet
-from unittest import IsolatedAsyncioTestCase
 
 DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
 

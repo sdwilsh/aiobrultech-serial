@@ -1,12 +1,13 @@
 from __future__ import annotations
+
 import asyncio
-from asyncio.queues import Queue
-from asyncio.tasks import Task
 import functools
 import logging
+from asyncio.queues import Queue
+from asyncio.tasks import Task
 from typing import Any, Awaitable, Callable
-import serial_asyncio
 
+import serial_asyncio
 from siobrultech_protocols.gem.packets import Packet
 from siobrultech_protocols.gem.protocol import PacketProtocol
 

@@ -1,8 +1,10 @@
 import argparse
 import asyncio
 import logging
-from aiobrultech_serial import connect
+
 from siobrultech_protocols.gem.packets import Packet
+
+from aiobrultech_serial import connect
 
 
 def init_argparse() -> argparse.ArgumentParser:
