@@ -17,7 +17,18 @@ pip install aiobrultech-serial
 ## Usage
 
 ```python
+from aiobrultech_serial import connect
+from siobrultech_protocols.gem.packets import Packet
+
+
+async def handler(packet: Packet) -> None:
+    print("{}".format(packet))
+
+connect(handler, port)
 ```
+
+Look at [`scripts/dump.py`](https://github.com/sdwilsh/aiobrultech-serial/blob/main/scripts/dump.py)
+for a fuller example.
 
 ## Development
 

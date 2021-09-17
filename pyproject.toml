@@ -4,4 +4,4 @@ build-backend = "setuptools.build_meta"
 
 [tool.isort]
 profile = "black"
-src_paths = ["aiobrultech_serial", "tests"]
+src_paths = ["aiobrultech_serial", "scripts", "tests"]
