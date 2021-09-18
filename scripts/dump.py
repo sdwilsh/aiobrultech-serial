@@ -2,8 +2,6 @@ import argparse
 import asyncio
 import logging
 
-from siobrultech_protocols.gem.packets import Packet
-
 from aiobrultech_serial import connect
 
 
@@ -20,10 +18,9 @@ def init_argparse() -> argparse.ArgumentParser:
 
 
 async def main(port: str) -> None:
-    async def handler(packet: Packet) -> None:
-        print("{}".format(packet))
-
-    connect(handler, port)
+    async with connect(port) as connection:
+        async for packet in connection.packets():
+            print(f"{packet}")
 
 
 if __name__ == "__main__":

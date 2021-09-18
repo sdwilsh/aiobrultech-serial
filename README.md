@@ -18,13 +18,11 @@ pip install aiobrultech-serial
 
 ```python
 from aiobrultech_serial import connect
-from siobrultech_protocols.gem.packets import Packet
 
 
-async def handler(packet: Packet) -> None:
-    print("{}".format(packet))
-
-connect(handler, port)
+async with connect("/dev/ttyUSB0") as connection:
+    async for packet in connection.packets():
+        print(f"{packet}")
 ```
 
 Look at [`scripts/dump.py`](https://github.com/sdwilsh/aiobrultech-serial/blob/main/scripts/dump.py)
