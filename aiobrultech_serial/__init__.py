@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import asyncio
-import functools
 import logging
+from asyncio.futures import Future
+from asyncio.queues import Queue
 from asyncio.tasks import Task
-from typing import Any, AsyncGenerator
+from types import TracebackType
+from typing import Any, AsyncGenerator, Optional, Type
 
 import serial_asyncio
 from siobrultech_protocols.gem.packets import Packet
@@ -14,15 +16,15 @@ logger = logging.getLogger(__name__)
 
 
 class Connection(object):
-    def __init__(self, port: str, baudrate: int = 115200, **kwargs):
-        self._closed_future = asyncio.Future()
-        self._packets = asyncio.Queue()
+    def __init__(self, port: str, baudrate: int = 115200, **kwargs: Any):
+        self._closed_future: Future[bool] = Future()
+        self._packets: Queue[Packet] = Queue()
         self._producer_task: Task[
             tuple[serial_asyncio.SerialTransport, Any]
         ] = asyncio.create_task(
-            serial_asyncio.create_serial_connection(
+            serial_asyncio.create_serial_connection(  # type: ignore
                 asyncio.get_event_loop(),
-                functools.partial(PacketProtocol, queue=self._packets),
+                lambda: PacketProtocol(queue=self._packets),
                 port,
                 baudrate=baudrate,
                 **kwargs,
@@ -64,7 +66,12 @@ class Connection(object):
     async def __aenter__(self) -> Connection:
         return self
 
-    async def __aexit__(self, exc_type, exc, exc_traceback):
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]],
+        exc: Optional[BaseException],
+        exc_traceback: Optional[TracebackType],
+    ):
         await self.close()
 
 
