@@ -16,7 +16,8 @@ def read_packet(packet_file_name: str) -> bytes:
 class TestConnection(IsolatedAsyncioTestCase):
     async def test_close_connection_stops_generator(self) -> None:
         class Data(asyncio.Protocol):
-            def connection_made(self, transport: asyncio.Transport) -> None:
+            def connection_made(self, transport: asyncio.BaseTransport) -> None:
+                assert isinstance(transport, asyncio.Transport)
                 transport.write(read_packet("BIN32-NET.bin"))
 
         await asyncio.create_task(
@@ -30,7 +31,8 @@ class TestConnection(IsolatedAsyncioTestCase):
 
     async def test_close_transport_stops_generator(self) -> None:
         class Data(asyncio.Protocol):
-            def connection_made(self, transport: asyncio.Transport) -> None:
+            def connection_made(self, transport: asyncio.BaseTransport) -> None:
+                assert isinstance(transport, asyncio.Transport)
                 transport.write(read_packet("BIN32-NET.bin"))
                 transport.close()
 
@@ -44,7 +46,8 @@ class TestConnection(IsolatedAsyncioTestCase):
 
     async def test_break_exits_gracefully(self) -> None:
         class Data(asyncio.Protocol):
-            def connection_made(self, transport: asyncio.Transport) -> None:
+            def connection_made(self, transport: asyncio.BaseTransport) -> None:
+                assert isinstance(transport, asyncio.Transport)
                 transport.write(read_packet("BIN32-NET.bin"))
 
         await asyncio.create_task(

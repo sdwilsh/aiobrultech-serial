@@ -4,4 +4,43 @@ build-backend = "setuptools.build_meta"
 
 [tool.isort]
 profile = "black"
-src_paths = ["aiobrultech_serial", "scripts", "tests"]
+src_paths = [
+    "aiobrultech_serial",
+    "scripts",
+    "tests",
+]
+
+[tool.pyright]
+include = [
+    "aiobrultech_serial",
+    "scripts",
+    "tests",
+]
+exclude = [
+    "**/__pycache__"
+]
+pythonVersion = "3.8"
+reportConstantRedefinition = "error"
+reportFunctionMemberAccess = "error"
+reportIncompatibleMethodOverride = "error"
+reportIncompatibleVariableOverride = "error"
+reportInvalidTypeVarUse = "error"
+reportMissingImports = "error"
+reportMissingModuleSource = "error"
+reportMissingParameterType = "error"
+reportMissingTypeStubs = "none"
+reportMissingTypeArgument = "error"
+reportOverlappingOverload = "error"
+reportPrivateUsage = "error"
+reportUnknownMemberType = "none"
+reportUnknownParameterType = "error"
+reportUnknownVariableType = "none"
+reportUntypedBaseClass = "error"
+reportUntypedClassDecorator = "error"
+reportUntypedFunctionDecorator = "error"
+reportUntypedNamedTuple = "error"
+reportUnusedClass = "error"
+reportUnusedFunction = "error"
+reportUnusedImport = "error"
+reportUnusedVariable = "error"
+typeCheckingMode = "strict"
