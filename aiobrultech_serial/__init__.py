@@ -24,16 +24,17 @@ class Connection(object):
         ] = asyncio.create_task(
             serial_asyncio.create_serial_connection(  # type: ignore
                 asyncio.get_event_loop(),
-                lambda: PacketProtocol(queue=self._packets),
+                lambda: self._protocol,
                 port,
                 baudrate=baudrate,
                 **kwargs,
             ),
             name=f"{__name__}:serial-connection",
         )
+        self._protocol = PacketProtocol(queue=self._packets)
 
     async def packets(self) -> AsyncGenerator[Packet, None]:
-        transport, _ = await self._producer_task
+        transport = await self._get_transport()
         while not transport.is_closing() and not self._closed_future.done():
             task: Task[Packet] = asyncio.create_task(
                 self._packets.get(), name=f"{__name__}:wait-for-packet"
@@ -60,7 +61,7 @@ class Connection(object):
     async def close(self) -> None:
         if not self._closed_future.done():
             self._closed_future.set_result(True)
-            transport, _ = await self._producer_task
+            transport = await self._get_transport()
             transport.close()
 
     async def __aenter__(self) -> Connection:
@@ -73,6 +74,10 @@ class Connection(object):
         exc_traceback: Optional[TracebackType],
     ):
         await self.close()
+
+    async def _get_transport(self) -> serial_asyncio.SerialTransport:
+        transport, _ = await self._producer_task
+        return transport
 
 
 connect = Connection
