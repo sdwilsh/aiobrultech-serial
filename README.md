@@ -28,6 +28,12 @@ async with connect("/dev/ttyUSB0") as connection:
 Look at [`scripts/dump.py`](https://github.com/sdwilsh/aiobrultech-serial/blob/main/scripts/dump.py)
 for a fuller example.
 
+### API Calls
+
+This library also supports getting and setting information on the attached
+device. It supports all of the API calls available in
+[siobrultech-protocols](https://github.com/sdwilsh/siobrultech-protocols).
+
 ## Development
 
 ### Setup

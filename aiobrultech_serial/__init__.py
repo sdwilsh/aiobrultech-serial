@@ -3,20 +3,26 @@ from __future__ import annotations
 import asyncio
 import logging
 from asyncio.futures import Future
+from asyncio.locks import Lock
 from asyncio.queues import Queue
 from asyncio.tasks import Task
+from datetime import datetime
 from types import TracebackType
 from typing import Any, AsyncGenerator, Optional, Type
 
 import serial_asyncio
-from siobrultech_protocols.gem.packets import Packet
-from siobrultech_protocols.gem.protocol import PacketProtocol
+from siobrultech_protocols.gem import api
+from siobrultech_protocols.gem.packets import Packet, PacketFormatType
+from siobrultech_protocols.gem.protocol import BidirectionalProtocol
+
+from aiobrultech_serial.exceptions import SetFailed
 
 logger = logging.getLogger(__name__)
 
 
 class Connection(object):
     def __init__(self, port: str, baudrate: int = 115200, **kwargs: Any):
+        self._api_lock: Lock = Lock()
         self._closed_future: Future[bool] = Future()
         self._packets: Queue[Packet] = Queue()
         self._producer_task: Task[
@@ -31,7 +37,7 @@ class Connection(object):
             ),
             name=f"{__name__}:serial-connection",
         )
-        self._protocol = PacketProtocol(queue=self._packets)
+        self._protocol = BidirectionalProtocol(queue=self._packets)
 
     async def packets(self) -> AsyncGenerator[Packet, None]:
         transport = await self._get_transport()
@@ -63,6 +69,42 @@ class Connection(object):
             self._closed_future.set_result(True)
             transport = await self._get_transport()
             transport.close()
+
+    async def get_serial_number(self) -> int:
+        async with self._api_lock:
+            return await api.get_serial_number(self._protocol)
+
+    async def set_date_and_time(self, new_datetime: datetime) -> None:
+        async with self._api_lock:
+            success = await api.set_date_and_time(self._protocol, new_datetime)
+            if not success:
+                raise SetFailed()
+
+    async def set_packet_format(self, format: PacketFormatType) -> None:
+        async with self._api_lock:
+            success = await api.set_packet_format(self._protocol, format)
+            if not success:
+                raise SetFailed()
+
+    async def set_packet_send_interval(self, send_interval_seconds: int) -> None:
+        async with self._api_lock:
+            success = await api.set_packet_send_interval(
+                self._protocol, send_interval_seconds
+            )
+            if not success:
+                raise SetFailed()
+
+    async def set_secondary_packet_format(self, format: PacketFormatType) -> None:
+        async with self._api_lock:
+            success = await api.set_secondary_packet_format(self._protocol, format)
+            if not success:
+                raise SetFailed()
+
+    async def synchronize_time(self) -> None:
+        async with self._api_lock:
+            success = await api.synchronize_time(self._protocol)
+            if not success:
+                raise SetFailed()
 
     async def __aenter__(self) -> Connection:
         return self

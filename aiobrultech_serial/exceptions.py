@@ -1,0 +1,2 @@
+class SetFailed(Exception):
+    pass
