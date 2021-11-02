@@ -71,22 +71,26 @@ class Connection(object):
             transport.close()
 
     async def get_serial_number(self) -> int:
+        await self._assert_transport_open()
         async with self._api_lock:
             return await api.get_serial_number(self._protocol)
 
     async def set_date_and_time(self, new_datetime: datetime) -> None:
+        await self._assert_transport_open()
         async with self._api_lock:
             success = await api.set_date_and_time(self._protocol, new_datetime)
             if not success:
                 raise SetFailed()
 
     async def set_packet_format(self, format: PacketFormatType) -> None:
+        await self._assert_transport_open()
         async with self._api_lock:
             success = await api.set_packet_format(self._protocol, format)
             if not success:
                 raise SetFailed()
 
     async def set_packet_send_interval(self, send_interval_seconds: int) -> None:
+        await self._assert_transport_open()
         async with self._api_lock:
             success = await api.set_packet_send_interval(
                 self._protocol, send_interval_seconds
@@ -95,16 +99,22 @@ class Connection(object):
                 raise SetFailed()
 
     async def set_secondary_packet_format(self, format: PacketFormatType) -> None:
+        await self._assert_transport_open()
         async with self._api_lock:
             success = await api.set_secondary_packet_format(self._protocol, format)
             if not success:
                 raise SetFailed()
 
     async def synchronize_time(self) -> None:
+        await self._assert_transport_open()
         async with self._api_lock:
             success = await api.synchronize_time(self._protocol)
             if not success:
                 raise SetFailed()
+
+    async def _assert_transport_open(self):
+        transport = await self._get_transport()
+        assert not transport.is_closing() and not self._closed_future.done()
 
     async def __aenter__(self) -> Connection:
         return self
