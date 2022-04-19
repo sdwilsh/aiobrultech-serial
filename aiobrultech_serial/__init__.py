@@ -13,7 +13,11 @@ from typing import Any, AsyncGenerator, Optional, Type
 import serial_asyncio
 from siobrultech_protocols.gem import api
 from siobrultech_protocols.gem.packets import Packet, PacketFormatType
-from siobrultech_protocols.gem.protocol import BidirectionalProtocol
+from siobrultech_protocols.gem.protocol import (
+    BidirectionalProtocol,
+    PacketProtocolMessage,
+    PacketReceivedMessage,
+)
 
 from aiobrultech_serial.exceptions import SetFailed
 
@@ -24,7 +28,7 @@ class Connection(object):
     def __init__(self, port: str, baudrate: int = 115200, **kwargs: Any):
         self._api_lock: Lock = Lock()
         self._closed_future: Future[bool] = Future()
-        self._packets: Queue[Packet] = Queue()
+        self._packets: Queue[PacketProtocolMessage] = Queue()
         self._producer_task: Task[
             tuple[serial_asyncio.SerialTransport, Any]
         ] = asyncio.create_task(
@@ -42,7 +46,7 @@ class Connection(object):
     async def packets(self) -> AsyncGenerator[Packet, None]:
         transport = await self._get_transport()
         while not transport.is_closing() and not self._closed_future.done():
-            task: Task[Packet] = asyncio.create_task(
+            task: Task[PacketProtocolMessage] = asyncio.create_task(
                 self._packets.get(), name=f"{__name__}:wait-for-packet"
             )
             try:
@@ -59,7 +63,9 @@ class Connection(object):
                 raise
             if task in done:
                 self._packets.task_done()
-                yield task.result()
+                message = task.result()
+                if isinstance(message, PacketReceivedMessage):
+                    yield message.packet
             else:
                 # Try again if our loop condition is good still.
                 task.cancel()
