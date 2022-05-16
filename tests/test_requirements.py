@@ -32,7 +32,10 @@ class TestRequirements(unittest.TestCase):
             r: List[Tuple[str, List[Tuple[str, str]]]] = []
             for repo in repos_config:
                 for hook in repo["hooks"]:
-                    if hook["language_version"] != "python3":
+                    if (
+                        "language_version" not in hook
+                        or hook["language_version"] != "python3"
+                    ):
                         continue
                     r.append((hook["id"], [("==", repo["rev"].lstrip("v"))]))
             return r
