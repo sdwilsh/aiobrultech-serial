@@ -6,12 +6,13 @@ from asyncio.futures import Future
 from asyncio.locks import Lock
 from asyncio.queues import Queue
 from asyncio.tasks import Task
-from datetime import datetime
+from datetime import datetime, timedelta
 from types import TracebackType
 from typing import Any, AsyncGenerator, Optional, Type
 
 import serial_asyncio
 from siobrultech_protocols.gem import api
+from siobrultech_protocols.gem.const import PACKET_DELAY_CLEAR_TIME_DEFAULT
 from siobrultech_protocols.gem.packets import Packet, PacketFormatType
 from siobrultech_protocols.gem.protocol import (
     BidirectionalProtocol,
@@ -25,7 +26,13 @@ logger = logging.getLogger(__name__)
 
 
 class Connection(object):
-    def __init__(self, port: str, baudrate: int = 115200, **kwargs: Any):
+    def __init__(
+        self,
+        port: str,
+        baudrate: int = 115200,
+        packet_delay_clear_time: timedelta = PACKET_DELAY_CLEAR_TIME_DEFAULT,
+        **kwargs: Any,
+    ):
         self._api_lock: Lock = Lock()
         self._closed_future: Future[bool] = Future()
         self._packets: Queue[PacketProtocolMessage] = Queue()
@@ -41,7 +48,10 @@ class Connection(object):
             ),
             name=f"{__name__}:serial-connection",
         )
-        self._protocol = BidirectionalProtocol(queue=self._packets)
+        self._protocol = BidirectionalProtocol(
+            queue=self._packets,
+            packet_delay_clear_time=packet_delay_clear_time,
+        )
 
     async def packets(self) -> AsyncGenerator[Packet, None]:
         transport = await self._get_transport()
