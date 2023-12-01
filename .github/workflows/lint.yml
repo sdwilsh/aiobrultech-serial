@@ -17,6 +17,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - uses: earthly/actions-setup@v1.0.8
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # renovate: datasource=docker depName=earthly/earthly
+          version: "v0.7.22"
       - uses: actions/setup-python@v4
         with:
           python-version: "3.11"
@@ -25,4 +30,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
+      - name: Run Earthly Lint
+        env:
+          EARTHLY_CI: true
+        run: earthly +lint
       - uses: "pre-commit/action@v3.0.0"
