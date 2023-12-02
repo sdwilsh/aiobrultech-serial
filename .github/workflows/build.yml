@@ -5,6 +5,7 @@ on: # yamllint disable-line rule:truthy
   push:
     branches:
       - "main"
+      - "renovate/**"
       - "v**"
   pull_request:
     branches:
