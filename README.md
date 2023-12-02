@@ -1,5 +1,7 @@
 ![Lint](https://github.com/sdwilsh/aiobrultech-serial/workflows/Lint/badge.svg)
 ![Build](https://github.com/sdwilsh/aiobrultech-serial/workflows/Build/badge.svg)
+![PyPI](https://img.shields.io/pypi/v/aiobrultech_serial)
+![Supported Python Versions](https://img.shields.io/pypi/pyversions/aiobrultech_serial)
 
 # What is aiobrultech-serial?
 
