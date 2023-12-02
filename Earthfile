@@ -24,9 +24,9 @@ pyright-validate:
     RUN pip install --no-cache-dir pyright==$PYRIGHT_VERSION
     WORKDIR /usr/src/app
     COPY pyproject.toml .
-    COPY scripts/ scripts/
-    COPY aiobrultech_serial/ aiobrultech_serial/
-    COPY tests/ tests/
+    COPY --dir aiobrultech_serial .
+    COPY --dir scripts .
+    COPY --dir tests .
     RUN pyright
 
 renovate-validate:
@@ -41,9 +41,9 @@ ruff-validate:
     FROM +python-dev-requirements
     WORKDIR /usr/src/app
     COPY pyproject.toml .
-    COPY scripts .
-    COPY aiobrultech_serial .
-    COPY tests .
+    COPY --dir aiobrultech_serial .
+    COPY --dir scripts .
+    COPY --dir tests .
     RUN ruff check . --diff
 
 lint:
