@@ -1,9 +1,5 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base"
-  ],
-  "timezone": "America/Los_Angeles",
   "customManagers": [
     {
       "customType": "regex",
@@ -44,5 +40,23 @@
         "#\\s*renovate:\\s*datasource=(?<datasource>.*?)\\s+depName=(?<depName>.*?)\\s+version:\\s+\"(?<currentValue>.*?)\""
       ]
     }
-  ]
+  ],
+  "extends": [
+    "config:base"
+  ],
+  "packageRules": [
+    {
+      "automerge": true,
+      "automergeType": "branch",
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ]
+    }
+  ],
+  "schedule": [
+    "after 16:00 every friday",
+    "every weekend"
+  ],
+  "timezone": "America/Los_Angeles"
 }
