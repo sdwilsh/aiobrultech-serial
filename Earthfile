@@ -18,10 +18,7 @@ python-dev-requirements:
     RUN pip install --no-cache-dir -r requirements-dev.txt
 
 pyright-image:
-    # renovate: datasource=pypi depName=pyright
-    ARG PYRIGHT_VERSION=1.1.338
     FROM +python-dev-requirements
-    RUN pip install --no-cache-dir pyright==$PYRIGHT_VERSION
     RUN nodeenv /.cache/nodeenv
     ENV PYRIGHT_PYTHON_ENV_DIR=/.cache/nodeenv
     WORKDIR /usr/src/app
