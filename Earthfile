@@ -62,6 +62,7 @@ ruff-validate:
     COPY --dir scripts .
     COPY --dir tests .
     RUN ruff check . --diff
+    RUN ruff format . --diff
 
 lint:
     BUILD +pyright-validate
