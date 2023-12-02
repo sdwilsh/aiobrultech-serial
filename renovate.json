@@ -8,6 +8,15 @@
     {
       "customType": "regex",
       "fileMatch": [
+        "^.pre-commit-config.yaml$"
+      ],
+      "matchStrings": [
+        "#\\s*renovate:\\s*datasource=(?<datasource>.*?)\\s+depName=(?<depName>.*?)\\s+rev:\\s+v?(?<currentValue>.*?)\\s"
+      ]
+    },
+    {
+      "customType": "regex",
+      "fileMatch": [
         "(^|/|\\.)Earthfile$"
       ],
       "matchStrings": [
