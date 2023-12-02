@@ -15,6 +15,7 @@ from siobrultech_protocols.gem import api
 from siobrultech_protocols.gem.const import PACKET_DELAY_CLEAR_TIME_DEFAULT
 from siobrultech_protocols.gem.packets import Packet, PacketFormatType
 from siobrultech_protocols.gem.protocol import (
+    ApiType,
     BidirectionalProtocol,
     PacketProtocolMessage,
     PacketReceivedMessage,
@@ -29,6 +30,7 @@ class Connection(object):
     def __init__(
         self,
         port: str,
+        api_type: Optional[ApiType] = None,
         baudrate: int = 115200,
         packet_delay_clear_time: timedelta = PACKET_DELAY_CLEAR_TIME_DEFAULT,
         **kwargs: Any,
@@ -49,6 +51,7 @@ class Connection(object):
             name=f"{__name__}:serial-connection",
         )
         self._protocol = BidirectionalProtocol(
+            api_type=api_type,
             queue=self._packets,
             packet_delay_clear_time=packet_delay_clear_time,
         )
