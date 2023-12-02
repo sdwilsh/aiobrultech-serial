@@ -17,6 +17,18 @@ python-dev-requirements:
     COPY requirements-dev.txt .
     RUN pip install --no-cache-dir -r requirements-dev.txt
 
+pyright-validate:
+    # renovate: datasource=pypi depName=pyright
+    ARG PYRIGHT_VERSION=1.1.338
+    FROM +python-dev-requirements
+    RUN pip install --no-cache-dir pyright==$PYRIGHT_VERSION
+    WORKDIR /usr/src/app
+    COPY pyproject.toml .
+    COPY scripts/ scripts/
+    COPY aiobrultech_serial/ aiobrultech_serial/
+    COPY tests/ tests/
+    RUN pyright
+
 renovate-validate:
     # renovate: datasource=docker depName=renovate/renovate versioning=docker
     ARG RENOVATE_VERSION=37
@@ -35,5 +47,6 @@ ruff-validate:
     RUN ruff check . --diff
 
 lint:
+    BUILD +pyright-validate
     BUILD +renovate-validate
     BUILD +ruff-validate
