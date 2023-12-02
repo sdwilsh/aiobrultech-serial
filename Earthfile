@@ -17,17 +17,37 @@ python-dev-requirements:
     COPY requirements-dev.txt .
     RUN pip install --no-cache-dir -r requirements-dev.txt
 
-pyright-validate:
+pyright-image:
     # renovate: datasource=pypi depName=pyright
     ARG PYRIGHT_VERSION=1.1.338
     FROM +python-dev-requirements
     RUN pip install --no-cache-dir pyright==$PYRIGHT_VERSION
+    RUN nodeenv /.cache/nodeenv
+    ENV PYRIGHT_PYTHON_ENV_DIR=/.cache/nodeenv
     WORKDIR /usr/src/app
     COPY pyproject.toml .
     COPY --dir aiobrultech_serial .
+
+pyright-validate:
+    FROM +pyright-image
     COPY --dir scripts .
     COPY --dir tests .
+    COPY --dir typings .
     RUN pyright
+
+pyright-verify-types:
+    FROM +pyright-image
+    RUN pip install .
+    RUN pyright --verifytypes aiobrultech_serial
+
+pyright-verify-stubs:
+    FROM +pyright-image
+    COPY --dir typings git-typings
+    RUN pyright --createstub serial_asyncio
+    # If this fails, delete and regenerate with `pyright --createstub serial_asyncio`.
+    RUN find typings -name "*.pyi" -type f -print \
+        | awk '{print "git-"$1" "$1}' \
+        | xargs -n 2 diff -U8 -p
 
 renovate-validate:
     # renovate: datasource=docker depName=renovate/renovate versioning=docker
@@ -48,5 +68,7 @@ ruff-validate:
 
 lint:
     BUILD +pyright-validate
+    BUILD +pyright-verify-stubs
+    BUILD +pyright-verify-types
     BUILD +renovate-validate
     BUILD +ruff-validate

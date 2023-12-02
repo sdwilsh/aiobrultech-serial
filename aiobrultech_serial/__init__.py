@@ -22,7 +22,7 @@ from siobrultech_protocols.gem.protocol import (
 
 from aiobrultech_serial.exceptions import SetFailed
 
-logger = logging.getLogger(__name__)
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 class Connection(object):
@@ -140,7 +140,7 @@ class Connection(object):
         exc_type: Optional[Type[BaseException]],
         exc: Optional[BaseException],
         exc_traceback: Optional[TracebackType],
-    ):
+    ) -> None:
         await self.close()
 
     async def _get_transport(self) -> serial_asyncio.SerialTransport:
