@@ -1,19 +1,11 @@
 {
-    "python.testing.unittestArgs": [
-        "-v",
-        "-s",
-        "./tests",
-        "-p",
-        "test_*.py"
-    ],
-    "python.testing.pytestEnabled": true,
-    "python.testing.nosetestsEnabled": false,
-    "python.testing.unittestEnabled": false,
-    "python.formatting.provider": "black",
-    "editor.formatOnSave": true,
     "python.testing.pytestArgs": [
         "tests"
     ],
+    "python.testing.pytestEnabled": true,
+    "python.testing.unittestEnabled": false,
+    "editor.formatOnSave": true,
     "python.analysis.typeCheckingMode": "basic",
-    "python.analysis.diagnosticMode": "workspace"
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.addImport.exactMatchOnly": true
 }
