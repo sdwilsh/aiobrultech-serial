@@ -2,17 +2,11 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
-  - repo: local
+  - repo: https://github.com/RobertCraigie/pyright-python
+    # renovate: datasource=github-releases depName=pyright-python
+    rev: v1.1.338
     hooks:
       - id: pyright
-        name: pyright
-        entry: pyright
-        language: node
-        pass_filenames: false
-        types:
-          - python
-        additional_dependencies:
-          - "pyright@1.1.186"
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # renovate: datasource=pypi depName=ruff
     rev: v0.1.6
