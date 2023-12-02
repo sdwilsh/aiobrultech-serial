@@ -10,8 +10,12 @@ on: # yamllint disable-line rule:truthy
 
 jobs:
   deploy:
+    environment:
+        name: pypi
+        url: https://pypi.org/project/aiobrultech-serial/
+    permissions:
+        id-token: write
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
@@ -31,11 +35,8 @@ jobs:
           --out-dir dist/
           .
       - name: Publish distribution 📦 to Test PyPI
-        uses: pypa/gh-action-pypi-publish@master
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          password: ${{ secrets.TESTPYPI_API_TOKEN }}
-          repository_url: https://test.pypi.org/legacy/
+          repository-url: https://test.pypi.org/legacy/
       - name: Publish distribution 📦 to PyPI
-        uses: pypa/gh-action-pypi-publish@master
-        with:
-          password: ${{ secrets.PYPI_API_TOKEN }}
+        uses: pypa/gh-action-pypi-publish@release/v1
