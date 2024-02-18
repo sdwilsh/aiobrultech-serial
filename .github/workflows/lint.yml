@@ -34,4 +34,4 @@ jobs:
         env:
           EARTHLY_CI: true
         run: earthly +lint
-      - uses: "pre-commit/action@v3.0.1"
+      - uses: "pre-commit/action@v3.0.0"
