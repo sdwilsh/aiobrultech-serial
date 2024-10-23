@@ -1,5 +1,5 @@
 pre-commit==3.5.0
-pyright==1.1.338
+pyright==1.1.386
 pytest==7.4.3
 pyyaml==6.0.1
 ruff==0.1.6
